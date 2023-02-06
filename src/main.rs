@@ -3,8 +3,16 @@
 // use exercise::abc;
 // use exercise::exercise_test::lib_test;
 
-use std::fmt::{Display, Debug};
+use std::rc::Rc;
+// use std::fmt::{Display, Debug};
+// use std::{ops::Deref, rc::Rc, cell::RefCell};
+use std::thread;
+use std::time::Duration;
+use std::sync::mpsc;
+use std::sync::Mutex;
+use std::sync::Arc;
 
+// static ssss: &str = "I have a static lifetime";
 fn main() {
     // lab1()
     // lab2()
@@ -36,7 +44,20 @@ fn main() {
     // println!("{apple}");
     // add_employee("Engineering", "Sally");
     // lab24();
-    lab25();
+    // lab25();
+    // lab_26();
+    // lab_27();
+    // lab_29();
+    // lab_30();
+    // lab_31();
+    // lab_32();
+    // lab_33();
+    // lab_34();
+    // lab35();
+    // lab36();
+    // lab37();
+    // lab38();
+    lab39();
 }
 
 // fn lab1() {
@@ -567,52 +588,265 @@ fn main() {
 //     println!("{}", p2.distance_from_origin());
 // }
 
-pub trait Summary {
-    fn summarize(&self) -> String;
-}
+// pub trait Summary {
+//     fn summarize(&self) -> String;
+// }
 
-pub struct NewsArticle {
-    pub headline: String,
-    pub location: String,
-    pub author: String,
-    pub content: String,
-}
+// pub struct NewsArticle {
+//     pub headline: String,
+//     pub location: String,
+//     pub author: String,
+//     pub content: String,
+// }
 
-impl Summary for NewsArticle {
-    fn summarize(&self) -> String {
-        format!("{}, by {} ({})", self.headline, self.author, self.location)
-    }
-}
+// impl Summary for NewsArticle {
+//     fn summarize(&self) -> String {
+//         format!("{}, by {} ({})", self.headline, self.author, self.location)
+//     }
+// }
 
-pub struct Tweet {
-    pub username: String,
-    pub content: String,
-    pub reply: bool,
-    pub retweet: bool,
-}
+// pub struct Tweet {
+//     pub username: String,
+//     pub content: String,
+//     pub reply: bool,
+//     pub retweet: bool,
+// }
 
-impl Summary for Tweet {
-    fn summarize(&self) -> String {
-        format!("{}: {}", self.username, self.content)
-    }
-}
+// impl Summary for Tweet {
+//     fn summarize(&self) -> String {
+//         format!("{}: {}", self.username, self.content)
+//     }
+// }
 
-fn lab25() {
-    let tweet = Tweet {
-        username: String::from("horse_ebook"),
-        content: String::from("of course, as you probably already know, people"),
-        reply: false,
-        retweet: false,
-    };
-    println!("1 new tweet: {}", tweet.summarize())
-}
+// fn lab25() {
+//     let tweet = Tweet {
+//         username: String::from("horse_ebook"),
+//         content: String::from("of course, as you probably already know, people"),
+//         reply: false,
+//         retweet: false,
+//     };
+//     println!("1 new tweet: {}", tweet.summarize())
+// }
 
-pub fn notify(item: &impl Summary) {
-    println!("Breaking news: {}", item.summarize())
-}
+// pub fn notify(item: &impl Summary) {
+//     println!("Breaking news: {}", item.summarize())
+// }
 
 // pub fn notify(item: &(impl Summary + Display)) {}
 
 // pub fn some_function<T, U>(t: &T, u: &U) -> i32 where T: Display + Clone, U: Clone + Debug {
-    
 // }
+
+// fn longest_with_an_announcement<'a, T>(x: &'a str, y: &'a str, ann: T) -> &'a str where T: Display {
+//     println!("Announcement: {}", ann);
+//     if x.len() > y.len() {
+//         x
+//     } else {
+//         y
+//     }
+// }
+
+// fn add_one_v1(x: u32) -> u32 {
+//     let add_one_v2 = |x: u32| -> u32 { x + 1 };
+//     let add_one_v3 = |x| { x + 1 };
+//     let add_one_v4 = |x| x + 1;
+
+//     let result1 = add_one_v3(x);
+//     let result2 = add_one_v4(x);
+//     x + 1
+// }
+
+// fn lab_26() {
+//     let list = vec![1, 2, 4];
+
+//     use std::thread;
+//     thread::spawn(move || println!("from thread: {:?}", list))
+//     .join().unwrap()
+// }
+
+// fn lab_27() {
+//     let nums = vec![1, 2, 3];
+//     let num_iter = nums.iter();
+
+//     let plus_one_iter = num_iter.map(|x| x + 1);
+//     for num in plus_one_iter  {
+//         println!("{num}")
+//     }
+// }
+
+// enum List {
+//     Cons(i32, Box<List>),
+//     Nil,
+// }
+
+// fn lab_28() {
+//     let list = List::Cons(1, Box::new(List::Cons(2, Box::new(List::Cons(3, Box::new(List::Cons(4, Box::new(List::Nil))))))));
+// }
+
+// fn lab_29() {
+//     let x = 5;
+//     let y = &x;
+
+//     assert_eq!(5, x);
+//     assert_eq!(5, *y);
+// }
+
+// struct MyBox<T>(T);
+
+// impl <T> MyBox<T> {
+//     fn new(x: T) -> MyBox<T> {
+//         MyBox(x)
+//     }
+// }
+
+// impl<T> Deref for MyBox<T> {
+//     type Target = T;
+
+//     fn deref(&self) -> &Self::Target {
+//         &self.0
+//     }
+// }
+
+// fn lab_30() {
+//     let x = 5;
+//     let y = MyBox::new(x);
+
+//     assert_eq!(5, x);
+//     assert_eq!(5, *y)
+// }
+
+// fn hello(name: &str) {
+//     println!("Hello, {name}");
+// }
+
+// fn lab_31() {
+//     let m = MyBox::new(String::from("Rust"));
+//     hello(&m);
+// }
+
+// #[derive(Debug)]
+// enum List  {
+//     // Cons(i32, Rc<List>),
+//     Cons(Rc<RefCell<i32>>, Rc<List>),
+//     Nil,
+// }
+
+// fn lab_32() {
+//     let a = Rc::new(List::Cons(5, Rc::new(List::Cons(10, Rc::new(List::Nil)))));
+//     let b = List::Cons(3, Rc::clone(&a));
+//     let b = List::Cons(4, Rc::clone(&a));
+// }
+
+// fn lab_33() {
+//     let value = Rc::new(RefCell::new(5));
+
+//     let a = Rc::new(List::Cons(Rc::clone(&value), Rc::new(List::Nil)));
+
+//     let b = List::Cons(Rc::new(RefCell::new(3)), Rc::clone(&a));
+//     let c = List::Cons(Rc::new(RefCell::new(4)), Rc::clone(&a));
+
+//     *value.borrow_mut() += 10;
+
+//     println!("a after = {:?}", a);
+//     println!("b after = {:?}", b);
+//     println!("c after = {:?}", c);
+// }
+
+// fn lab_34() {
+//     let handle = thread::spawn(|| {
+//         for i in 1..10 {
+//             println!("hi number {} from spawned thread!", i);
+//             thread::sleep(Duration::from_millis(1));
+//         }
+//     });
+
+//     for i in 1..5  {
+//         println!("hi number {} from main thread!", i);
+//         thread::sleep(Duration::from_millis(1));
+//     }
+//     handle.join().unwrap();
+// }
+
+// fn lab35() {
+//     let v = vec![1, 2, 3];
+
+//     let handle = thread::spawn(move ||{
+//         println!("Here's a vector: {:?}", v);
+//     });
+
+//     handle.join().unwrap();
+// }
+
+// fn lab36() {
+//     let (tx, rx) = mpsc::channel();
+
+//     thread::spawn(move || {
+//         let val = String::from("value");
+//         tx.send(val).unwrap();
+//     });
+
+//     let received = rx.recv().unwrap();
+//     print!("Got: {}", received);
+// }
+
+// fn lab37() {
+//     let (tx, tr) = mpsc::channel();
+
+//     let tx2 = tx.clone();
+//     thread::spawn(move || {
+//         let vec = vec![
+//             String::from("1"),
+//             String::from("2"),
+//             String::from("3")
+//         ];
+//         for val in vec  {
+//             tx.send(val).unwrap();
+//         }
+//     });
+
+//     thread::spawn(move || {
+//         let vec = vec![
+//             String::from("4"),
+//             String::from("5"),
+//             String::from("6")
+//         ];
+//         for val in vec  {
+//             tx2.send(val).unwrap();
+//         }
+//     });
+
+//     for received in tr  {
+//         println!("Got {}", received);
+//     }
+// }
+
+// fn lab38() {
+//     let m = Mutex::new(5);
+
+//     {
+//         let mut num = m.lock().unwrap();
+//         *num = 6;
+//     }
+
+//     println!("num: {:?}", m);
+// }
+
+fn lab39() {
+    let counter = Arc::new(Mutex::new(0));
+    let mut handles = vec![];
+
+    for _ in 1..10 {
+        let counter = Arc::clone(&counter);
+        let handle = thread::spawn(move ||{
+            let mut m = counter.lock().unwrap();
+            *m += 1;
+        });
+        handles.push(handle);
+    }
+
+    for handle in handles  {
+        handle.join().unwrap();
+    }
+
+    println!("Result: {}", counter.lock().unwrap());
+}
