@@ -6,11 +6,11 @@
 use std::rc::Rc;
 // use std::fmt::{Display, Debug};
 // use std::{ops::Deref, rc::Rc, cell::RefCell};
+use std::sync::mpsc;
+use std::sync::Arc;
+use std::sync::Mutex;
 use std::thread;
 use std::time::Duration;
-use std::sync::mpsc;
-use std::sync::Mutex;
-use std::sync::Arc;
 
 // static ssss: &str = "I have a static lifetime";
 fn main() {
@@ -57,7 +57,25 @@ fn main() {
     // lab36();
     // lab37();
     // lab38();
-    lab39();
+    // lab39();
+    // lab40();
+    // lab41();
+    // lab44();
+    // lab45();
+    // lab46();
+    // let modula = -40 / 60;
+    // println!("{}", modula);
+    // let substr = "ahdjf".chars().nth(1).unwrap();
+    // println!("{:?}", substr);
+
+    let mut str1 = String::from("value");
+    let str2 = String::from("value");
+    let str3 = String::from("value");
+
+    str1 += &str2;
+    str1 += &str3;
+
+
 }
 
 // fn lab1() {
@@ -124,7 +142,7 @@ fn main() {
 // fn is_divisible_by(lhs: u32, rhs: u32) -> bool {
 //     if lhs == 0 {
 //         return false;
-//     } 
+//     }
 //     return lhs % rhs == 0;
 // }
 
@@ -306,7 +324,7 @@ fn main() {
 //     }
 
 //     fn oldest_book(&self) -> Option<&Book> {
-//         if self.is_empty() { return None } 
+//         if self.is_empty() { return None }
 //         let mut oldest_book_index: usize = 0;
 //         for i in 1..self.len() {
 //             if self.books[oldest_book_index].year > self.books[i].year {
@@ -320,17 +338,17 @@ fn main() {
 // fn lab15() {
 //     let mut library = Library::new();
 //     println!("Our library is empty: {}", library.is_empty());
-    
+
 //     library.add_book(Book::new("Lord of the Rings", 1954));
 //     library.add_book(Book::new("Alice's Adventures in Wonderland", 1865));
-    
+
 //     library.print_books();
-    
+
 //     match library.oldest_book() {
 //        Some(book) => println!("My oldest book is {book}"),
 //        None => println!("My library is empty!"),
 //     }
-    
+
 //     println!("Our library has {} books", library.len());
 // }
 
@@ -457,7 +475,7 @@ fn main() {
 //     use std::collections::HashMap;
 
 //     let mut map = HashMap::new();
-    
+
 //     map.insert(String::from("key1"), 32);
 //     map.insert(String::from("key2"), 64);
 
@@ -831,22 +849,147 @@ fn main() {
 //     println!("num: {:?}", m);
 // }
 
-fn lab39() {
-    let counter = Arc::new(Mutex::new(0));
-    let mut handles = vec![];
+// fn lab39() {
+//     let counter = Arc::new(Mutex::new(0));
+//     let mut handles = vec![];
 
-    for _ in 1..10 {
-        let counter = Arc::clone(&counter);
-        let handle = thread::spawn(move ||{
-            let mut m = counter.lock().unwrap();
-            *m += 1;
-        });
-        handles.push(handle);
-    }
+//     for _ in 1..10 {
+//         let counter = Arc::clone(&counter);
+//         let handle = thread::spawn(move ||{
+//             let mut m = counter.lock().unwrap();
+//             *m += 1;
+//         });
+//         handles.push(handle);
+//     }
 
-    for handle in handles  {
-        handle.join().unwrap();
-    }
+//     for handle in handles  {
+//         handle.join().unwrap();
+//     }
 
-    println!("Result: {}", counter.lock().unwrap());
+//     println!("Result: {}", counter.lock().unwrap());
+// }
+
+// fn lab40() {
+//     let mut stack = Vec::new();
+
+//     stack.push(1);
+//     stack.push(2);
+//     stack.push(3);
+
+//     while let Some(top) = stack.pop() {
+//         println!("{}", top);
+//     }
+// }
+
+// enum Message {
+//     Hello { id: i32 },
+// }
+
+// fn lab41() {
+//     let message = Message::Hello { id: 5 };
+
+//     match message {
+//         Message::Hello {
+//             id: id_variable @ 3..=7,
+//         } => println!("Found an id in range: {}", id_variable),
+//         Message::Hello { id: 10..=12 } => {
+//             println!("Found an id in another range")
+//         }
+//         Message::Hello { id } => println!("Found some other id: {}", id),
+//     }
+// }
+
+// fn lab42() {
+//     // raw pointer
+//     let mut num = 5;
+
+//     let r1 = &num as *const i32;
+//     let r2 = &mut num as *mut i32;
+
+//     unsafe {
+//         println!("r1 is {}", *r1);
+//         println!("r2 is {}", *r2);
+//     }
+// }
+
+// unsafe fn lab43() {
+//     // raw pointer
+//     let mut num = 5;
+
+//     let r1 = &num as *const i32;
+//     let r2 = &mut num as *mut i32;
+
+//     println!("r1 is {}", *r1);
+//     println!("r2 is {}", *r2);
+// }
+
+// extern "C" {
+//     fn abs(input: i32) -> i32;
+// }
+
+// fn lab44() {
+//     unsafe {
+//         println!("Absolute value of -3 according to C: {}", abs(3));
+//     }
+// }
+
+// #[no_mangle]
+// pub extern "C" fn call_from_c() {
+//     println!("Called a Rust function from c");
+// }
+
+// static HELLO_WORLD: &str = "Hello world";
+
+// fn lab45() {
+//     print!("name is: {}", HELLO_WORLD);
+// }
+
+use std::ops::Add;
+
+#[derive(Debug, Copy, Clone, PartialEq)]
+struct Point {
+    x: i32,
+    y: i32
 }
+
+impl Add for Point {
+    type Output = Point;
+
+    fn add(self, rhs: Point) -> Self::Output {
+        Point {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+        }
+    }
+}
+
+fn lab46() {
+    assert_eq!(
+        Point {x: 1, y: 0} + Point {x: 2, y: 3},
+        Point {x: 3, y: 3}
+    );
+}
+
+struct Millimeters(u32);
+struct Meters(u32);
+
+impl Add<Meters> for Millimeters {
+    type Output = Millimeters;
+
+    fn add(self, rhs: Meters) -> Millimeters {
+        Millimeters(self.0 + (rhs.0 * 1000))
+    }
+}
+// <Type as Trait>::function(receiver_if_method, next_arg, ...);
+// #[macro_export]
+// macro_rules! vec {
+//     ( $( $x:expr ),* ) => {
+//         {
+//             let mut temp_vec = Vec::new();
+//             $(
+//                 temp_vec.push($x);
+//             )*
+//             temp_vec
+//         }
+//     };
+// }
